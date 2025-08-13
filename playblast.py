@@ -43,7 +43,7 @@ class Playblast:
 		frame.paste(overlay_lower, (0, frame.height - overlay_lower.height + 2), overlay_lower)
 		return frame
 
-	def render(self):
+	def render(self, preview: bool = False):
 		source = cv.VideoCapture(str(self.video_file))
 		frame_count = int(source.get(cv.CAP_PROP_FRAME_COUNT))
 		self.width = int(source.get(cv.CAP_PROP_FRAME_WIDTH))
@@ -80,11 +80,12 @@ class Playblast:
 			composite = cv.cvtColor(np.array(frame_image), cv.COLOR_RGB2BGR)
 
 			# Displaying the result
-			scale = int(1 / 0.5)
-			scaled = cv.resize(composite, (composite.shape[1] // scale, composite.shape[0] // scale))
-			cv.imshow("Playblast", scaled)
-			if cv.waitKey(1) & 0xFF == ord('q'):
-				break
+			if preview:
+				scale = int(1 / 0.5)
+				scaled = cv.resize(composite, (composite.shape[1] // scale, composite.shape[0] // scale))
+				cv.imshow("Playblast", scaled)
+				if cv.waitKey(1) & 0xFF == ord('q'):
+					break
 
 			out.write(composite)
 
