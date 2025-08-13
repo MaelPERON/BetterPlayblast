@@ -165,31 +165,27 @@
 			});
 
 			logo = Array.from(document.querySelectorAll('#logo img'));
-			custom_logo = undefined;
-			//{CUSTOM_LOGO}
-			if(custom_logo) {
-				logo.forEach(icon => {
+			logo.forEach(icon => {
+				custom_logo = undefined;
+				//{CUSTOM_LOGO}
+				if(custom_logo) {
 					icon.src = custom_logo;
 					icon.className = "icon";
-				});
-			}
-
-			disable_logo_filter = false;
-			//{DISABLE_LOGO_FILTER}
-			if(disable_logo_filter) {
-				logo.forEach(icon => {
+				}
+	
+				disable_logo_filter = false;
+				//{DISABLE_LOGO_FILTER}
+				if(disable_logo_filter) {
 					icon.classList.add('no-filter');
-				});
-			}
-
-			logo_size = undefined;
-			//{LOGO_SIZE}
-			if(logo_size) {
-				logo.forEach(icon => {
+				}
+	
+				logo_size = undefined;
+				//{LOGO_SIZE}
+				if(logo_size) {
 					icon.style.width = logo_size;
 					icon.style.height = logo_size;
-				});
-			}
+				}
+			});
 		});
 
 	</script>
