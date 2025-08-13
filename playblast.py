@@ -7,7 +7,7 @@ class Playblast:
 	def __init__(self, video_file: Path | str, json_file: Path | str, output_file: Path | str = None, metadatas: list[Metadata] = None):
 		self.video_file = Path(video_file)
 		self.json_file = Path(json_file)
-		self.output_file = Path(output_file) if output_file else (self.video_file / ".." / (self.video_file.stem + "_rendered" + self.video_file.suffix)).resolve()
+		self.output_file = Path(output_file) if output_file else self.video_file.with_suffix(f".playblast{self.video_file.suffix}")
 		self.data = self._load_json()
 		if not self.data:
 			raise ValueError(f"JSON file {self.json_file} is empty.")
