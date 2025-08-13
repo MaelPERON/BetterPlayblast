@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from metadata import MetadataList as Metadata
+from metadata import MetadataList, Metadata
 
 class Playblast:
 	def __init__(self, video_file: Path | str, json_file: Path | str, metadatas: list[Metadata] = None):
