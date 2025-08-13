@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 from pathlib import Path
 from metadata import MetadataList, Metadata
+from software import SoftwareList as Soft
 from overlay import Overlays
 
 class Playblast:
@@ -15,7 +16,17 @@ class Playblast:
 		self.data = self._load_json()
 		if not self.data:
 			raise ValueError(f"JSON file {self.json_file} is empty.")
+		
+		# Default Values
+		## Datas
+		icon = getattr(self.data, "icon", Soft.BLENDER.simple_icon)
+		self.data["icon"] = icon
 
+		## Metadatas
+		if not MetadataList.ICON in metadatas:
+			metadatas.append(MetadataList.ICON)
+
+		print([m.key for m in metadatas], self.data["icon"])
 		self.metadatas = metadatas or []
 
 	def _load_json(self):
