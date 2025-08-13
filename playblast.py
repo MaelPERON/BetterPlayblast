@@ -27,8 +27,8 @@ class Playblast:
 			except json.JSONDecodeError as e:
 				raise ValueError(f"JSON file {self.json_file} is not valid JSON:\n{e}")
 
-	def render_overlays(self):
-		overlays = Overlays(self.data, self.metadatas)
+	def render_overlays(self) -> list[Image.Image]:
+		overlays = Overlays(self.data, self.metadatas, width=self.width, height=36*2)
 		return overlays.bake()
 
 	@classmethod

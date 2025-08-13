@@ -8,12 +8,14 @@ from io import BytesIO
 from metadata import MetadataList, Metadata
 
 class Overlays:
-	def __init__(self, data, metadatas: list[Metadata], pool_size: int = 20):
+	def __init__(self, data, metadatas: list[Metadata], width: int = 1920, height: int = 36*2, pool_size: int = 20, software: str = "blender"):
 		self.data = data
 		self.metadatas = metadatas
 		self.frame_count = len(data.get('frames', []))
 		self.frame_start = self.data.get('frame_start', 1)
 		self.frame_end = self.data.get('frame_end', self.frame_count)
+		self.width = width
+		self.height = height
 		self.pool_size = pool_size
 		self.semaphore = asyncio.Semaphore(self.pool_size/2)
 		self.images = [None] * self.frame_count
@@ -30,8 +32,8 @@ class Overlays:
 			'headless': True,
 			'args': ['--no-sandbox', '--disable-setuid-sandbox'],
 			'defaultViewport': {
-				'width': 1920,
-				'height': 36*2
+				'width': self.width,
+				'height': self.height
 			}
 		})
 
