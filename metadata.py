@@ -25,4 +25,4 @@ class MetadataList:
 	THREADS = Metadata("num_threads", frame_dependant=True)
 	MARKER = Metadata("marker", frame_dependant=True)
 	ICON = Metadata("icon")
-	FPS = Metadata("frame_rate")
+	FPS = Metadata("fps")
