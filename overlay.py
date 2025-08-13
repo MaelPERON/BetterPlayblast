@@ -5,8 +5,10 @@ from pyppeteer import browser, launch
 from PIL import Image
 from io import BytesIO
 
+from metadata import MetadataList, Metadata
+
 class Overlays:
-	def __init__(self, data, metadatas, pool_size: int = 20):
+	def __init__(self, data, metadatas: list[Metadata], pool_size: int = 20):
 		self.data = data
 		self.metadatas = metadatas
 		self.frame_count = len(data.get('frames', []))
