@@ -74,5 +74,19 @@ class Overlays:
 	def parse_template(self, index):
 		content = self.template
 		ids = []
+		for metadata in self.metadatas:
+			source = self.data
+			if metadata.frame_dependant:
+				frames = self.data.get("frames", [])
+				if not frames or index >= len(frames):
+					continue
+				source = frames[index]
+
+			key = metadata.key
+			ids.append(key)
+			value = source.get(key, None)
+			if value is not None:
+				content = content.replace(f"{{{{{key}}}}}", str(value))
+
 		content = content.replace("//{SELECTED_IDS}", f"SELECTED_IDS = {ids}")
 		return content
