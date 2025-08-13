@@ -146,7 +146,7 @@
 	<script>
 		var SELECTED_IDS = [];
 		//{SELECTED_IDS}
-		SELECTED_IDS.push("icon")
+		SELECTED_IDS.push("logo")
 		window.addEventListener('DOMContentLoaded', () => {
 			document.querySelectorAll('.pair').forEach(el => {
 				id = el.id;
@@ -164,11 +164,11 @@
 				icon.style.display = show_icons ? "unset" : "none";
 			});
 
-			custom_icon = undefined;
-			//{CUSTOM_ICON}
-			if(custom_icon) {
-				document.querySelectorAll('#icon img').forEach(icon => {
-					icon.src = custom_icon;
+			custom_logo = undefined;
+			//{CUSTOM_LOGO}
+			if(custom_logo) {
+				document.querySelectorAll('#logo img').forEach(icon => {
+					icon.src = custom_logo;
 					icon.className = "icon";
 				});
 			}
@@ -181,7 +181,7 @@
 	<div class="container">
 		<div class="row upper">
 			<div class="tile left file_infos">
-				<div class="pair" id="icon">
+				<div class="pair" id="logo">
 					<img src="{{icon}}"
 						class="logo">
 				</div>

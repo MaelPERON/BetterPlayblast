@@ -130,6 +130,6 @@ class Overlays:
 		content = content.replace("//{SHOW_ICONS}", f"show_icons = {str(show_icons).lower()}")
 
 		# Custom Icon
-		if (custom_icon := self.options.get("custom_icon", None)):
-			content = content.replace("//{CUSTOM_ICON}", f"custom_icon = '{custom_icon}'")
+		if (custom_logo := self.options.get("custom_logo", None)):
+			content = content.replace("//{CUSTOM_LOGO}", f"custom_logo = '{custom_logo}'")
 		return content
