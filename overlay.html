@@ -164,10 +164,11 @@
 				icon.style.display = show_icons ? "unset" : "none";
 			});
 
+			logo = Array.from(document.querySelectorAll('#logo img'));
 			custom_logo = undefined;
 			//{CUSTOM_LOGO}
 			if(custom_logo) {
-				document.querySelectorAll('#logo img').forEach(icon => {
+				logo.forEach(icon => {
 					icon.src = custom_logo;
 					icon.className = "icon";
 				});
