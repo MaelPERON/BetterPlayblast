@@ -1,5 +1,7 @@
 import asyncio
 from pyppeteer import browser, launch
+from PIL import Image
+from io import BytesIO
 
 class Overlays:
 	def __init__(self, data, metadatas, pool_size: int = 20):
