@@ -21,9 +21,11 @@ class Overlays:
 			self.template = f.read()
 			f.close()
 
-		asyncio.run(self.bake())
+	def bake(self):
+		asyncio.run(self._bake())
+		return self.images
 
-	async def bake(self):
+	async def _bake(self):
 		self.browser = await launch(options={
 			'headless': True,
 			'args': ['--no-sandbox', '--disable-setuid-sandbox'],
