@@ -10,6 +10,8 @@ class Overlays:
 		self.data = data
 		self.metadatas = metadatas
 		self.frame_count = len(data.get('frames', []))
+		self.frame_start = self.data.get('frame_start', 1)
+		self.frame_end = self.data.get('frame_end', self.frame_count)
 		self.pool_size = pool_size
 		self.semaphore = asyncio.Semaphore(self.pool_size/2)
 		self.images = [None] * self.frame_count
