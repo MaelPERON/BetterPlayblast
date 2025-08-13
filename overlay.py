@@ -1,3 +1,5 @@
+import os
+os.environ['PYPPETEER_CHROMIUM_REVISION'] = '1230501'
 import asyncio
 from pyppeteer import browser, launch
 from PIL import Image
