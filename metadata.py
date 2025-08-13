@@ -22,3 +22,5 @@ class MetadataList:
 	USER = Metadata("user")
 	HOSTNAME = Metadata("hostname")
 	DATE = Metadata("date")
+	THREADS = Metadata("num_threads", frame_dependant=True)
+	MARKER = Metadata("marker", frame_dependant=True)
