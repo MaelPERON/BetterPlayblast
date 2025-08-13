@@ -28,6 +28,11 @@ class Playblast:
 		a = Image.fromarray(a)
 		b = Image.fromarray(b)
 		return a,b
+	
+	def apply_overlays(self, frame: Image.Image, overlay_upper: Image.Image, overlay_lower: Image.Image) -> cv.Mat:
+		frame.paste(overlay_upper, (0, 0), overlay_upper)
+		frame.paste(overlay_lower, (0, frame.height - overlay_lower.height + 2), overlay_lower)
+		return frame
 
 	def render(self):
 		source = cv.VideoCapture(str(self.video_file))
@@ -62,8 +67,7 @@ class Playblast:
 			overlay_upper, overlay_lower = Playblast.split_overlay(overlay)
 
 			# Alpha compositing over the frame image
-			frame_image.paste(overlay_upper, (0, 0), overlay_upper)
-			frame_image.paste(overlay_lower, (0, self.height - overlay_lower.height + 2), overlay_lower)
+			frame_image = self.apply_overlays(frame_image, overlay_upper, overlay_lower)
 			composite = cv.cvtColor(np.array(frame_image), cv.COLOR_RGB2BGR)
 
 			# Displaying the result
