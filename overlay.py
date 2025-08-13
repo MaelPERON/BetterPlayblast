@@ -106,7 +106,7 @@ class Overlays:
 		}
 
 		for key, value in frame_maps.items():
-			content = content.replace(f"{{{{{key}}}}}", str(value))
+			content = content.replace(f"{{{{{key}}}}}", str(value).zfill(4))
 
 		content = content.replace("//{SELECTED_IDS}", f"SELECTED_IDS = {ids}")
 		return content
