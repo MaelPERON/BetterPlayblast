@@ -122,5 +122,10 @@ class Overlays:
 		for key, value in frame_maps.items():
 			content = content.replace(f"{{{{{key}}}}}", str(value).zfill(4))
 
+		# Filter metadatas elements IDs
 		content = content.replace("//{SELECTED_IDS}", f"SELECTED_IDS = {ids}")
+
+		# Displaying icons or span
+		show_icons = self.options.get('show_icons', CONFIG.get('overlay_show_icons'))
+		content = content.replace("//{SHOW_ICONS}", f"show_icons = {str(show_icons).lower()}")
 		return content

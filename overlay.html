@@ -153,7 +153,17 @@
 					if(!SELECTED_IDS.includes(id)) return el.style.display = 'none';
 				}
 			});
+	
+			show_icons = true;
+			//{SHOW_ICONS}
+			document.querySelectorAll('.pair span').forEach(span => {
+				span.style.display = show_icons ? "none" : "unset";
+			});
+			document.querySelectorAll(".pair .icon").forEach(icon => {
+				icon.style.display = show_icons ? "unset" : "none";
+			});
 		});
+
 	</script>
 </head>
 
