@@ -18,7 +18,7 @@ class MetadataList:
 	LENS = Metadata("lens", frame_dependant=True)
 	MARKER = Metadata("marker", frame_dependant=True)
 	STRIP = Metadata("sequencer_strip", software=Soft.BLENDER, frame_dependant=True)
-	COMMENT = Metadata("comment")
+	COMMENT = Metadata("note")
 	USER = Metadata("user")
 	HOSTNAME = Metadata("hostname")
 	DATE = Metadata("date")
