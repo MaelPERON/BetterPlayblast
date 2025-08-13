@@ -48,9 +48,11 @@ class Overlays:
 	async def call_bake_overlay(self, index):
 		async with self.semaphore:
 			content = self.parse_template(index)
-			return await self.bake_overlay(self.pages[index % self.pool_size], content)
+			img = await self.bake_overlay(self.pages[index % self.pool_size], content, index)
+			self.images[index] = img
+			return
 
-	async def bake_overlay(self, page, content):
+	async def bake_overlay(self, page, content, index):
 		await page.setContent(content)
 
 		# Wait until all resources (images, stylesheets, scripts, etc.) are loaded, including SVG images
