@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Overlay Generator</title>
+	<style>
+		:root {
+			--overlay-width: 100vw;
+			--overlay-height: 50vh;
+			--ch-comment: 50ch;
+			--ch-span: 9ch;
+			--ch-p: 10ch;
+			color: #ffffff;
+			font-size: 1vw;
+			/* ^ should be equal to `1/120x + 11/6`px (where x : overlay width) */
+		}
+
+		body {
+			font-family: 'Courier New', Courier, monospace;
+			width: var(--overlay-width);
+			height: var(--overlay-height);
+		}
+
+		.container {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+		}
+
+		.row {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+			grid-template-rows: 1fr;
+			gap: 0px 1rem;
+			grid-auto-flow: row;
+			grid-template-areas:
+				"left center right";
+			height: var(--overlay-height);
+			max-height: var(--overlay-height);
+			padding: 0px 1rem;
+			background-color: hsla(0, 0%, 9%, 0.75);
+			overflow: hidden;
+		}
+
+		.left {
+			justify-content: start;
+			align-items: center;
+			grid-area: left;
+		}
+
+		.center {
+			justify-content: center;
+			align-items: center;
+			grid-area: center;
+		}
+
+		.right {
+			justify-content: end;
+			align-items: center;
+			grid-area: right;
+		}
+
+		body,
+		.container,
+		h1,
+		h2,
+		p {
+			margin: 0;
+		}
+
+		.tile {
+			max-width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: row;
+			gap: 10px;
+		}
+
+		.pair {
+			display: flex;
+			gap: 5px;
+		}
+
+
+		.pair>* {
+			overflow: hidden;
+			white-space: nowrap;
+			max-width: var(--ch-p);
+		}
+
+		.pair>span {
+			color: #ffffff;
+			max-width: var(--ch-span);
+			text-overflow: "…:";
+			opacity: 0.5;
+		}
+
+		.pair .icon {
+			display: unset;
+		}
+
+		.pair span {
+			display: none;
+		}
+
+		.pair>p {
+			text-overflow: ellipsis;
+		}
+
+		img {
+			filter: invert(100%);
+			/* Simple Icons, Feather Icons and blender-icons are black by default */
+		}
+
+		img.logo {
+			width: 1.25rem;
+			height: 1.25rem;
+
+		}
+
+		img.icon {
+			width: 1rem;
+			height: 1rem;
+		}
+
+		/* CUSTOM RULES */
+		.comment {
+			color: rgb(255, 255, 255);
+		}
+
+		.comment p {
+			max-width: var(--ch-comment);
+		}
+	</style>
+	<style>
+		:root {
+			/* --overlay-width: pb_width; */
+			/* --overlay-height: pb_height; */
+			/* --ch-comment: 10ch; */
+			/* --ch-span: 5ch; */
+			--foobar: "Hmmmmmmm";
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row upper">
+			<div class="tile left file_infos">
+				<img src="https://raw.githubusercontent.com/simple-icons/simple-icons/refs/heads/develop/icons/blender.svg"
+					alt="Logo" class="logo">
+				<div class="pair" id="filename">
+					<p style="max-width: 35ch">{{filename}}</p>
+				</div>
+				<div class="pair" id="frame_range">[{{frame_range}}]</div>
+				<div class="pair" id="scene">
+					<img src="https://raw.githubusercontent.com/feathericons/feather/refs/heads/main/icons/layout.svg"
+						alt="" class="icon">
+					<span>Scene:</span>
+					<p>{{scene}}</p>
+				</div>
+			</div>
+			<div class="tile center frame_ranges">
+				<div class="pair">{{local_frame_curr}}/{{local_frame_out}}</div>
+				<div class="pair">-</div>
+				<div class="pair">{{global_frame_curr}}/{{global_frame_out}}</div>
+			</div>
+			<div class="tile right image_infos">
+				<div class="pair" id="memory">
+					<img src="https://raw.githubusercontent.com/feathericons/feather/refs/heads/main/icons/cpu.svg"
+						alt="" class="icon">
+					<span>Memory Usage:</span>
+					{{memory}}
+				</div>
+				<div class="pair" id="render_time">
+					<img src="https://raw.githubusercontent.com/feathericons/feather/refs/heads/main/icons/clock.svg"
+						alt="" class="icon">
+					<span>Render Time:</span>
+					{{render_time}}
+				</div>
+				<div class="pair" id="resolution">
+					<img src="https://raw.githubusercontent.com/feathericons/feather/refs/heads/main/icons/crop.svg"
+						alt="" class="icon">
+					<span>Resolution:</span>
+					{{resolution}}
+				</div>
+			</div>
+		</div>
+		<div class="row lower">
+			<div class="tile left tech_infos">
+				<div class="pair" id="camera">
+					<img src="https://raw.githubusercontent.com/feathericons/feather/refs/heads/main/icons/camera.svg"
+						alt="Camera" class="icon">
+					<span>Camera:</span>
+					<p>{{camera}}</p>
+				</div>
+				<div class="pair" id="lens">
+					<img src="https://raw.githubusercontent.com/feathericons/feather/refs/heads/main/icons/circle.svg"
+						alt="" class="icon">
+					<span>Focal Length:</span>
+					<p>{{lens}}</p>
+				</div>
+				<div class="pair" id="sequencer_strip">
+					<img src="https://raw.githubusercontent.com/feathericons/feather/refs/heads/main/icons/layers.svg"
+						alt="" class="icon">
+					<span>Strip:</span>
+					<p>{{sequencer_strip}}</p>
+				</div>
+			</div>
+			<div class="tile center comment">
+				<div class="pair" id="note">
+					<span>Comment:</span>
+					<p>{{note}}</p>
+				</div>
+			</div>
+			<div class="tile right user_infos">
+				<div class="pair" id="user">
+					<img src="https://raw.githubusercontent.com/feathericons/feather/refs/heads/main/icons/at-sign.svg"
+						alt="" class="icon"><span>User:</span>
+					<p>{{user}}</p>
+				</div>
+				<div class="pair" id="hostname">
+					<img src="https://raw.githubusercontent.com/feathericons/feather/refs/heads/main/icons/home.svg"
+						alt="" class="icon"><span>Hostname:</span>
+					<p>{{hostname}}</p>
+				</div>
+				<div class="pair" id="date">
+					<img src="https://raw.githubusercontent.com/feathericons/feather/refs/heads/main/icons/calendar.svg"
+						alt="" class="icon"><span>Date:</span>
+					<p style="max-width: 16ch;">{{date}}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
