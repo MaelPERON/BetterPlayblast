@@ -104,19 +104,36 @@ class Playblast:
 		source.release()
 		out.release()
 
-		# Combine audio from original video with processed video using ffmpeg
-		cmd = [
-			"ffmpeg",
-			"-y",
-			"-i", str(temp_video_file),
-			"-i", str(self.video_file),
-			"-c:v", "copy",
-			"-c:a", "aac",
-			"-map", "0:v:0",
-			"-map", "1:a:0",
-			str(self.output_file)
+		# Combine audio from original video with processed video using ffmpeg (if necessary)
+		probe_cmd = [
+			"ffprobe",
+			"-v", "error",
+			"-select_streams", "a",
+			"-show_entries", "stream=codec_type",
+			"-of", "json",
+			str(self.video_file)
 		]
-		subprocess.run(cmd, check=True)
+		probe_result = subprocess.run(probe_cmd, capture_output=True, text=True)
+		has_audio = False
+		try:
+			info = json.loads(probe_result.stdout)
+			has_audio = any(stream.get("codec_type") == "audio" for stream in info.get("streams", []))
+		except Exception:
+			has_audio = False
 
-		# Remove temporary video file
-		temp_video_file.unlink(missing_ok=True)
+		if has_audio:
+			cmd = [
+				"ffmpeg",
+				"-y",
+				"-i", str(temp_video_file),
+				"-i", str(self.video_file),
+				"-c:v", "copy",
+				"-c:a", "aac",
+				"-map", "0:v:0",
+				"-map", "1:a:0",
+				str(self.output_file)
+			]
+			subprocess.run(cmd, check=True)
+			temp_video_file.unlink(missing_ok=True)
+		else:
+			temp_video_file.rename(self.output_file)
