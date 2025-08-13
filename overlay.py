@@ -15,6 +15,9 @@ class Overlays:
 		self.pool_size = pool_size
 		self.semaphore = asyncio.Semaphore(self.pool_size/2)
 		self.images = [None] * self.frame_count
+		with open("overlay.html", encoding="utf-8") as f:
+			self.template = f.read()
+			f.close()
 
 		asyncio.run(self.bake())
 
@@ -67,3 +70,9 @@ class Overlays:
 		if img.mode != 'RGBA':
 			img = img.convert('RGBA')  # Ensure transparency is preserved
 		return img
+
+	def parse_template(self, index):
+		content = self.template
+		ids = []
+		content = content.replace("//{SELECTED_IDS}", f"SELECTED_IDS = {ids}")
+		return content
