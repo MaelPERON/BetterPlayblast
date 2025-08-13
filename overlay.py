@@ -2,10 +2,10 @@ import asyncio
 from pyppeteer import browser, launch
 
 class Overlays:
-	def __init__(self, frame_count, data, metadatas, pool_size: int = 20):
-		self.frame_count = frame_count
+	def __init__(self, data, metadatas, pool_size: int = 20):
 		self.data = data
 		self.metadatas = metadatas
+		self.frame_count = len(data.get('frames', []))
 		self.pool_size = pool_size
 		self.semaphore = asyncio.Semaphore(self.pool_size/2)
 		self.images = [None] * self.frame_count
