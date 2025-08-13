@@ -101,6 +101,7 @@ class Overlays:
 			key = metadata.key
 			ids.append(key)
 			value = source.get(key, None)
+			if isinstance(value, float): value = f"{value:.2f}"
 			if value is not None:
 				content = content.replace(f"{{{{{key}}}}}", str(value))
 
