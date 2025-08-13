@@ -9,7 +9,7 @@ class Software:
 		stem = ".".join(name.split(".")[:-1])
 		return stem
 
-class Softwares:
+class SoftwareList:
 	BLENDER = Software("blender", simple_icon="blender")
 	AUTODESK_MAYA = Software("autodesk_maya", simple_icon="autodeskmaya")
 	HOUDINI = Software("houdini", simple_icon="houdini")
