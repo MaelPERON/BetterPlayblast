@@ -26,3 +26,6 @@ class Playblast:
 	def render(self):
 		source = cv.VideoCapture(str(self.video_file))
 		frame_count = int(source.get(cv.CAP_PROP_FRAME_COUNT))
+		self.width = int(source.get(cv.CAP_PROP_FRAME_WIDTH))
+		self.height = int(source.get(cv.CAP_PROP_FRAME_HEIGHT))
+		self.fps = int(source.get(cv.CAP_PROP_FPS))
