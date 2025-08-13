@@ -1,0 +1,6 @@
+# Module features
+temp_directory: "%localappdata%/BetterPlayblast/temp/"
+log_directory: "%localappdata%/BetterPlayblast/logs/"
+
+# Overlay settings
+overlay_show_icons: True
