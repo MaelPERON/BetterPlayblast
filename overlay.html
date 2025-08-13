@@ -143,6 +143,18 @@
 			--foobar: "Hmmmmmmm";
 		}
 	</style>
+	<script>
+		var SELECTED_IDS = [];
+		// SELECTED_IDS
+		window.addEventListener('DOMContentLoaded', () => {
+			document.querySelectorAll('.pair').forEach(el => {
+				id = el.id;
+				if(id) {
+					if(!SELECTED_IDS.includes(id)) return el.style.display = 'none';
+				}
+			});
+		});
+	</script>
 </head>
 
 <body>
