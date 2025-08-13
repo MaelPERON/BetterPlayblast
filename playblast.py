@@ -9,7 +9,7 @@ from software import SoftwareList as Soft
 from overlay import Overlays
 
 class Playblast:
-	def __init__(self, video_file: Path | str, json_file: Path | str, output_file: Path | str = None, metadatas: list[Metadata] = None):
+	def __init__(self, video_file: Path | str, json_file: Path | str, output_file: Path | str = None, metadatas: list[Metadata] = None, options: dict = {}):
 		self.video_file = Path(video_file)
 		self.json_file = Path(json_file)
 		self.output_file = Path(output_file) if output_file else self.video_file.with_suffix(f".playblast{self.video_file.suffix}")
@@ -26,8 +26,8 @@ class Playblast:
 		if not MetadataList.ICON in metadatas:
 			metadatas.append(MetadataList.ICON)
 
-		print([m.key for m in metadatas], self.data["icon"])
 		self.metadatas = metadatas or []
+		self.options = options
 
 	def _load_json(self):
 		if not self.json_file.exists():
@@ -39,7 +39,7 @@ class Playblast:
 				raise ValueError(f"JSON file {self.json_file} is not valid JSON:\n{e}")
 
 	def render_overlays(self) -> list[Image.Image]:
-		overlays = Overlays(self.data, self.metadatas, width=self.width, height=36*2)
+		overlays = Overlays(self.data, self.metadatas, width=self.width, height=36*2, options=self.options.get("overlay", {}))
 		return overlays.bake()
 
 	@classmethod
