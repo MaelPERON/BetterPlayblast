@@ -7,6 +7,7 @@ class Overlays:
 		self.data = data
 		self.metadatas = metadatas
 		self.pool_size = pool_size
+		self.semaphore = asyncio.Semaphore(self.pool_size/2)
 		self.images = [None] * self.frame_count
 
 		asyncio.run(self.bake())
@@ -22,8 +23,6 @@ class Overlays:
 		})
 
 		self.pages = [await self.browser.newPage() for _ in range(self.pool_size)]
-
-		semaphore = asyncio.Semaphore(self.pool_size/2)
 
 		# ...
 
