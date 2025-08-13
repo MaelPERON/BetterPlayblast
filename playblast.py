@@ -22,7 +22,13 @@ class Playblast:
 				return json.load(f)
 			except json.JSONDecodeError as e:
 				raise ValueError(f"JSON file {self.json_file} is not valid JSON:\n{e}")
-			
+	@classmethod
+	def split_overlay(cls, overlay) -> tuple[Image.Image, Image.Image]:
+		a,b = np.split(overlay, 2, axis=0)
+		a = Image.fromarray(a)
+		b = Image.fromarray(b)
+		return a,b
+
 	def render(self):
 		source = cv.VideoCapture(str(self.video_file))
 		frame_count = int(source.get(cv.CAP_PROP_FRAME_COUNT))
@@ -53,9 +59,7 @@ class Playblast:
 			overlay = np.array(overlay)
 
 			# Splitting it in two
-			overlay_upper, overlay_lower = np.split(overlay, 2, axis=0)
-			overlay_lower = Image.fromarray(overlay_lower)
-			overlay_upper = Image.fromarray(overlay_upper)
+			overlay_upper, overlay_lower = Playblast.split_overlay(overlay)
 
 			# Alpha compositing over the frame image
 			frame_image.paste(overlay_upper, (0, 0), overlay_upper)
