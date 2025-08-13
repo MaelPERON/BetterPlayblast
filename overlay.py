@@ -132,4 +132,9 @@ class Overlays:
 		# Custom Icon
 		if (custom_logo := self.options.get("custom_logo", None)):
 			content = content.replace("//{CUSTOM_LOGO}", f"custom_logo = '{custom_logo}'")
+
+		# Disable Logo Filter
+		if (disable := self.options.get("disable_logo_filter", False)):
+			content = content.replace("//{DISABLE_LOGO_FILTER}", f"disable_logo_filter = {str(disable).lower()}")
+
 		return content

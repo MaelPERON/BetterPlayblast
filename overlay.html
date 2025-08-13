@@ -109,7 +109,7 @@
 			text-overflow: ellipsis;
 		}
 
-		img {
+		img:not(.no-filter) {
 			filter: invert(100%);
 			/* Simple Icons, Feather Icons and blender-icons are black by default */
 		}
@@ -171,6 +171,14 @@
 				logo.forEach(icon => {
 					icon.src = custom_logo;
 					icon.className = "icon";
+				});
+			}
+
+			disable_logo_filter = false;
+			//{DISABLE_LOGO_FILTER}
+			if(disable_logo_filter) {
+				logo.forEach(icon => {
+					icon.classList.add('no-filter');
 				});
 			}
 		});
