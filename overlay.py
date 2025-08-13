@@ -32,4 +32,33 @@ class Overlays:
 
 		await self.browser.close()
 
-	
+	async def bake_overlay(self, page, content):
+		await page.setContent(content)
+
+		# Wait until all resources (images, stylesheets, scripts, etc.) are loaded, including SVG images
+		await page.evaluate("""
+			async () => {
+				if (document.readyState !== 'complete') {
+					await new Promise(resolve => {
+						window.addEventListener('load', resolve, { once: true });
+					});
+				}
+				// Wait for all <img> elements to be fully loaded
+				const images = Array.from(document.images);
+				await Promise.all(images.map(img => {
+					if (img.complete) return Promise.resolve();
+					return new Promise(resolve => {
+						img.addEventListener('load', resolve, { once: true });
+						img.addEventListener('error', resolve, { once: true });
+					});
+				}));
+			}
+		""")
+		# Take screenshot as PNG bytes in memory, ensure PNG format
+		png_bytes = await page.screenshot({'omitBackground': True, 'type': 'png'})
+
+		# Load image from bytes using Pillow
+		img = Image.open(BytesIO(png_bytes))
+		if img.mode != 'RGBA':
+			img = img.convert('RGBA')  # Ensure transparency is preserved
+		return img
