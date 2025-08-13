@@ -88,5 +88,17 @@ class Overlays:
 			if value is not None:
 				content = content.replace(f"{{{{{key}}}}}", str(value))
 
+		frame_maps = {
+			"global_frame_curr": index+1,
+			"global_frame_in": 1,
+			"global_frame_out": self.frame_count,
+			"local_frame_curr": self.frame_start + index,
+			"local_frame_in": self.frame_start,
+			"local_frame_out": self.frame_end
+		}
+
+		for key, value in frame_maps.items():
+			content = content.replace(f"{{{{{key}}}}}", str(value))
+
 		content = content.replace("//{SELECTED_IDS}", f"SELECTED_IDS = {ids}")
 		return content
