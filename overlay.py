@@ -35,12 +35,18 @@ class Overlays:
 
 		self.pages = [await self.browser.newPage() for _ in range(self.pool_size)]
 
-		# ...
+		tasks = [self.call_bake_overlay(i) for i in range(self.frame_count)]
+		await asyncio.gather(*tasks)
 
 		for page in self.pages:
 			await page.close()
 
 		await self.browser.close()
+
+	async def call_bake_overlay(self, index):
+		async with self.semaphore:
+			content = self.parse_template(index)
+			return await self.bake_overlay(self.pages[index % self.pool_size], content)
 
 	async def bake_overlay(self, page, content):
 		await page.setContent(content)
