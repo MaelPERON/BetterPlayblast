@@ -9,6 +9,8 @@ class Overlays:
 		self.pool_size = pool_size
 		self.images = [None] * self.frame_count
 
+		asyncio.run(self.bake())
+
 	async def bake(self):
 		self.browser = await launch(options={
 			'headless': True,
