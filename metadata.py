@@ -24,3 +24,4 @@ class MetadataList:
 	DATE = Metadata("date")
 	THREADS = Metadata("num_threads", frame_dependant=True)
 	MARKER = Metadata("marker", frame_dependant=True)
+	FPS = Metadata("frame_rate")
