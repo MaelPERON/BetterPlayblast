@@ -136,4 +136,9 @@ class Playblast:
 			subprocess.run(cmd, check=True)
 			temp_video_file.unlink(missing_ok=True)
 		else:
+			if self.output_file.exists():
+				try:
+					self.output_file.unlink(missing_ok=True)
+				except Exception as e:
+					print(f"Error deleting output file: {e}")
 			temp_video_file.rename(self.output_file)
