@@ -181,6 +181,15 @@
 					icon.classList.add('no-filter');
 				});
 			}
+
+			logo_size = undefined;
+			//{LOGO_SIZE}
+			if(logo_size) {
+				logo.forEach(icon => {
+					icon.style.width = logo_size;
+					icon.style.height = logo_size;
+				});
+			}
 		});
 
 	</script>

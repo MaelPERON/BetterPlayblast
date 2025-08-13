@@ -137,4 +137,7 @@ class Overlays:
 		if (disable := self.options.get("disable_logo_filter", False)):
 			content = content.replace("//{DISABLE_LOGO_FILTER}", f"disable_logo_filter = {str(disable).lower()}")
 
+		if (scale := self.options.get("logo_size", None)):
+			content = content.replace("//{LOGO_SIZE}", f"logo_size = '{scale}'")
+
 		return content
