@@ -1,4 +1,5 @@
 import json
+import cv2 as cv
 from pathlib import Path
 from metadata import MetadataList, Metadata
 
@@ -21,3 +22,7 @@ class Playblast:
 				return json.load(f)
 			except json.JSONDecodeError as e:
 				raise ValueError(f"JSON file {self.json_file} is not valid JSON:\n{e}")
+			
+	def render(self):
+		source = cv.VideoCapture(str(self.video_file))
+		frame_count = int(source.get(cv.CAP_PROP_FRAME_COUNT))
