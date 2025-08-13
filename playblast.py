@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 from pathlib import Path
 from metadata import MetadataList, Metadata
+from overlay import Overlays
 
 class Playblast:
 	def __init__(self, video_file: Path | str, json_file: Path | str, output_file: Path | str = None, metadatas: list[Metadata] = None):
@@ -25,6 +26,11 @@ class Playblast:
 				return json.load(f)
 			except json.JSONDecodeError as e:
 				raise ValueError(f"JSON file {self.json_file} is not valid JSON:\n{e}")
+
+	def render_overlays(self):
+		overlays = Overlays(self.data, self.metadatas)
+		return overlays.bake()
+
 	@classmethod
 	def split_overlay(cls, overlay) -> tuple[Image.Image, Image.Image]:
 		a,b = np.split(overlay, 2, axis=0)
