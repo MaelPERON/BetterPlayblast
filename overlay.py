@@ -52,7 +52,7 @@ class Overlays:
 			self.images[index] = img
 			return
 
-	async def bake_overlay(self, page, content, index):
+	async def bake_overlay(self, page, content, index, save_folder: str = None):
 		await page.setContent(content)
 
 		# Wait until all resources (images, stylesheets, scripts, etc.) are loaded, including SVG images
@@ -81,6 +81,10 @@ class Overlays:
 		img = Image.open(BytesIO(png_bytes))
 		if img.mode != 'RGBA':
 			img = img.convert('RGBA')  # Ensure transparency is preserved
+		if save_folder:
+			os.makedirs(save_folder, exist_ok=True)
+			path = os.path.join(save_folder, f"frame_{(index+1):04d}.png")
+			img.save(path)
 		return img
 
 	def parse_template(self, index):
