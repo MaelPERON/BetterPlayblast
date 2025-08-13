@@ -104,11 +104,10 @@ class Overlays:
 				source = frames[index]
 
 			key = metadata.key
-			ids.append(key)
 			value = source.get(key, None)
+			if value: ids.append(key)
 			if isinstance(value, float): value = f"{value:.2f}"
-			if value is not None:
-				content = content.replace(f"{{{{{key}}}}}", str(value))
+			content = content.replace(f"{{{{{key}}}}}", str(value))
 
 		frame_maps = {
 			"global_frame_curr": index+1,
