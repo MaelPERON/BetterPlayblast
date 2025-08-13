@@ -163,6 +163,15 @@
 			document.querySelectorAll(".pair .icon").forEach(icon => {
 				icon.style.display = show_icons ? "unset" : "none";
 			});
+
+			custom_icon = undefined;
+			//{CUSTOM_ICON}
+			if(custom_icon) {
+				document.querySelectorAll('#icon img').forEach(icon => {
+					icon.src = custom_icon;
+					icon.className = "icon";
+				});
+			}
 		});
 
 	</script>
@@ -172,7 +181,7 @@
 	<div class="container">
 		<div class="row upper">
 			<div class="tile left file_infos">
-				<div class="pair">
+				<div class="pair" id="icon">
 					<img src="{{icon}}"
 						class="logo">
 				</div>

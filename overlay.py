@@ -128,4 +128,8 @@ class Overlays:
 		# Displaying icons or span
 		show_icons = self.options.get('show_icons', CONFIG.get('overlay_show_icons'))
 		content = content.replace("//{SHOW_ICONS}", f"show_icons = {str(show_icons).lower()}")
+
+		# Custom Icon
+		if (custom_icon := self.options.get("custom_icon", None)):
+			content = content.replace("//{CUSTOM_ICON}", f"custom_icon = '{custom_icon}'")
 		return content
