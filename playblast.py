@@ -54,7 +54,7 @@ class Playblast:
 		temp_video_file = self.output_file.with_suffix(".temp.mp4")
 		out = cv.VideoWriter(str(temp_video_file), cv.VideoWriter.fourcc(*"mp4v"), self.fps, (self.width, self.height))
 
-		overlays : list[Image.Image] = self.render_overlays(frame_count)
+		overlays : list[Image.Image] = self.render_overlays()
 
 		frame_head = 0
 		while source.isOpened():
