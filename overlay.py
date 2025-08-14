@@ -8,6 +8,11 @@ from io import BytesIO
 from metadata import MetadataList, Metadata
 from config import CONFIG
 
+PYPPETEER_OPTIONS = {
+	'headless': True,
+	'args': ['--no-sandbox', '--disable-setuid-sandbox']
+}
+
 class Overlays:
 	def __init__(self, data, metadatas: list[Metadata], width: int = 1920, height: int = 36*2, pool_size: int = 20, software: str = "blender", options: dict = {}):
 		self.data = data
@@ -31,14 +36,11 @@ class Overlays:
 		return self.images
 
 	async def _bake(self):
-		self.browser = await launch(options={
-			'headless': True,
-			'args': ['--no-sandbox', '--disable-setuid-sandbox'],
-			'defaultViewport': {
-				'width': self.width,
-				'height': self.height
-			}
-		})
+		PYPPETEER_OPTIONS["defaultViewport"] = {
+			'width': self.width,
+			'height': self.height
+		}
+		self.browser = await launch(options=PYPPETEER_OPTIONS)
 
 		self.pages = [await self.browser.newPage() for _ in range(self.pool_size)]
 
