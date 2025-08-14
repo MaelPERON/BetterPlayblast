@@ -185,6 +185,14 @@
 					icon.style.height = logo_size;
 				}
 			});
+
+			note_color = undefined;
+			//{NOTE_COLOR}
+			if (note_color) {
+				document.querySelectorAll('.pair#note p').forEach(p => {
+					p.style.color = note_color;
+				});
+			}
 		});
 
 	</script>

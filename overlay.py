@@ -139,4 +139,7 @@ class Overlays:
 		if (scale := self.options.get("logo_size", None)):
 			content = content.replace("//{LOGO_SIZE}", f"logo_size = '{scale}'")
 
+		if (note_color := self.options.get("note_color", None)):
+			content = content.replace("//{NOTE_COLOR}", f"note_color = '{note_color}'")
+
 		return content
