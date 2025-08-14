@@ -89,13 +89,14 @@ class Playblast:
 		except Exception:
 			return False
 
-	def preview(self, frame: int = 0):
+	def preview(self, frame: int = 0) -> None | Image.Image:
 		source = self.get_source()
 		self.update_capture_properties(source)
 
 		if frame < 0 or frame >= self.frame_count:
 			raise ValueError(f"Frame index {frame} is out of bounds. Must be between 0 and {self.frame_count - 1}.")
 
+		composite = None
 		frame_head = 0
 		while source.isOpened():
 			ret, matlike = source.read()
@@ -116,6 +117,7 @@ class Playblast:
 			break
 
 		source.release()
+		return composite
 
 	def render(self, preview: bool = False):
 		source = self.get_source()
