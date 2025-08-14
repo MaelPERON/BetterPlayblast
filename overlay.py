@@ -23,6 +23,9 @@ class OverlayMixin:
 		self.width = width
 		self.height = height
 		self.options = options
+		with open("overlay.html", encoding="utf-8") as f:
+			self.template = f.read()
+			f.close()
 
 	async def init_browser(self):
 		PYPPETEER_OPTIONS["defaultViewport"] = {
@@ -148,9 +151,6 @@ class Overlays(OverlayMixin):
 		self.pool_size = pool_size
 		self.semaphore = asyncio.Semaphore(self.pool_size/2)
 		self.images = [None] * self.frame_count
-		with open("overlay.html", encoding="utf-8") as f:
-			self.template = f.read()
-			f.close()
 
 	def bake(self):
 		asyncio.run(self._bake())
