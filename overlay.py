@@ -1,6 +1,4 @@
 import os
-
-from ctypes.test.test_macholib import d
 os.environ['PYPPETEER_CHROMIUM_REVISION'] = '1230501'
 import asyncio
 from pyppeteer import browser, launch
