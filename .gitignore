@@ -37,6 +37,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+tests/
 htmlcov/
 .tox/
 .nox/
@@ -138,6 +139,7 @@ celerybeat.pid
 .env
 .envrc
 .venv
+.vscode/
 env/
 venv/
 ENV/
