@@ -72,6 +72,22 @@ class Playblast:
 		self.height = int(source.get(cv.CAP_PROP_FRAME_HEIGHT))
 		self.fps = int(source.get(cv.CAP_PROP_FPS))
 
+	def has_audio(self) -> bool:
+		probe_cmd = [
+			"ffprobe",
+			"-v", "error",
+			"-select_streams", "a",
+			"-show_entries", "stream=codec_type",
+			"-of", "json",
+			str(self.video_file)
+		]
+		probe_result = subprocess.run(probe_cmd, capture_output=True, text=True)
+		try:
+			info = json.loads(probe_result.stdout)
+			return any(stream.get("codec_type") == "audio" for stream in info.get("streams", []))
+		except Exception:
+			return False
+
 	def preview(self, frame: int = 0):
 		source = self.get_source()
 		self.update_capture_properties(source)
@@ -143,23 +159,7 @@ class Playblast:
 		out.release()
 
 		# Combine audio from original video with processed video using ffmpeg (if necessary)
-		probe_cmd = [
-			"ffprobe",
-			"-v", "error",
-			"-select_streams", "a",
-			"-show_entries", "stream=codec_type",
-			"-of", "json",
-			str(self.video_file)
-		]
-		probe_result = subprocess.run(probe_cmd, capture_output=True, text=True)
-		has_audio = False
-		try:
-			info = json.loads(probe_result.stdout)
-			has_audio = any(stream.get("codec_type") == "audio" for stream in info.get("streams", []))
-		except Exception:
-			has_audio = False
-
-		if has_audio:
+		if self.has_audio():
 			cmd = [
 				"ffmpeg",
 				"-y",
