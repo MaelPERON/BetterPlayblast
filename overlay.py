@@ -13,8 +13,8 @@ PYPPETEER_OPTIONS = {
 	'args': ['--no-sandbox', '--disable-setuid-sandbox']
 }
 
-class Overlays:
-	def __init__(self, data, metadatas: list[Metadata], width: int = 1920, height: int = 36*2, pool_size: int = 20, software: str = "blender", options: dict = {}):
+class OverlayMixin:
+	def __init__(self, data, metadatas: list[Metadata], width: int = 1920, height: int = 36*2, software: str = "blender", options: dict = {}):
 		self.data = data
 		self.metadatas = metadatas
 		self.frame_count = len(data.get('frames', []))
@@ -23,7 +23,13 @@ class Overlays:
 		self.width = width
 		self.height = height
 		self.options = options
-		print(self.options)
+
+class Overlays(OverlayMixin):
+	def __init__(self, data, metadatas: list[Metadata], width: int = 1920, height: int = 36*2, pool_size: int = 20, software: str = "blender", options: dict = {}):
+		super().__init__(data, metadatas, width, height, software, options)
+		self.pool_size = pool_size
+		self.semaphore = asyncio.Semaphore(self.pool_size/2)
+		self.images = [None] * self.frame_count
 		self.pool_size = pool_size
 		self.semaphore = asyncio.Semaphore(self.pool_size/2)
 		self.images = [None] * self.frame_count
