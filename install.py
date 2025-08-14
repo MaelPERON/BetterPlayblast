@@ -25,3 +25,6 @@ def missing_packages() -> list[str]:
 	installed_modules = list_installed_modules()
 	return [key for key, value in PACKAGES.items() if value not in installed_modules]
 
+def all_installed() -> bool:
+	installed_modules = list_installed_modules()
+	return len(installed_modules) == len(PACKAGES)
