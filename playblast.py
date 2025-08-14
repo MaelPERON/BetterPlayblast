@@ -89,7 +89,7 @@ class Playblast:
 		except Exception:
 			return False
 
-	def preview(self, frame: int = 0) -> None | Image.Image:
+	def preview(self, frame: int = 0, show_image: bool = False) -> None | Image.Image:
 		source = self.get_source()
 		self.update_capture_properties(source)
 
@@ -112,8 +112,9 @@ class Playblast:
 			overlay = OverlayPreview(self.data, self.metadatas, frame_index, self.width, 36*2, self.options)
 			overlay_image = overlay.bake()
 			composite = self.composite_frame(frame_image, overlay_image)
-			composite.show()
-			sleep(0.5)
+			if show_image:
+				composite.show()
+				sleep(0.5)
 			break
 
 		source.release()
