@@ -4,9 +4,10 @@ import cv2 as cv
 import numpy as np
 from PIL import Image
 from pathlib import Path
+from time import sleep
 from metadata import MetadataList, Metadata
 from software import SoftwareList as Soft
-from overlay import Overlays
+from overlay import Overlays, OverlayPreview
 
 class Playblast:
 	def __init__(self, video_file: Path | str, json_file: Path | str, output_file: Path | str = None, metadatas: list[Metadata] = None, options: dict = {}):
@@ -36,6 +37,7 @@ class Playblast:
 		self.video_file = Path(video_file)
 		self.json_file = Path(json_file)
 		self.output_file = Path(output_file) if output_file else self.video_file.with_suffix(f".playblast{self.video_file.suffix}")
+		self.temp_file = None
 		self.data = self._load_json()
 		if not self.data:
 			raise ValueError(f"JSON file {self.json_file} is empty.")
@@ -76,17 +78,75 @@ class Playblast:
 		frame.paste(overlay_upper, (0, 0), overlay_upper)
 		frame.paste(overlay_lower, (0, frame.height - overlay_lower.height + 2), overlay_lower)
 		return frame
+	
+	def composite_frame(self, frame: Image.Image, overlay: Image.Image) -> Image.Image:
+		overlay = np.array(overlay)
 
-	def render(self, preview: bool = False):
-		source = cv.VideoCapture(str(self.video_file))
-		frame_count = int(source.get(cv.CAP_PROP_FRAME_COUNT))
+		# Splitting it in two
+		overlay_upper, overlay_lower = Playblast.split_overlay(overlay)
+
+		# Alpha compositing over the frame image
+		return self.apply_overlays(frame, overlay_upper, overlay_lower)
+
+	def get_source(self) -> cv.VideoCapture: return cv.VideoCapture(str(self.video_file))
+
+	def update_capture_properties(self, source: cv.VideoCapture):
+		self.frame_count = int(source.get(cv.CAP_PROP_FRAME_COUNT))
 		self.width = int(source.get(cv.CAP_PROP_FRAME_WIDTH))
 		self.height = int(source.get(cv.CAP_PROP_FRAME_HEIGHT))
 		self.fps = int(source.get(cv.CAP_PROP_FPS))
 
+	def has_audio(self) -> bool:
+		probe_cmd = [
+			"ffprobe",
+			"-v", "error",
+			"-select_streams", "a",
+			"-show_entries", "stream=codec_type",
+			"-of", "json",
+			str(self.video_file)
+		]
+		probe_result = subprocess.run(probe_cmd, capture_output=True, text=True)
+		try:
+			info = json.loads(probe_result.stdout)
+			return any(stream.get("codec_type") == "audio" for stream in info.get("streams", []))
+		except Exception:
+			return False
+
+	def preview(self, frame: int = 0):
+		source = self.get_source()
+		self.update_capture_properties(source)
+
+		if frame < 0 or frame >= self.frame_count:
+			raise ValueError(f"Frame index {frame} is out of bounds. Must be between 0 and {self.frame_count - 1}.")
+
+		frame_head = 0
+		while source.isOpened():
+			ret, matlike = source.read()
+			frame_head += 1
+			frame_index = frame_head - 1
+			if not ret:
+				break
+
+			if not frame_index == frame:
+				continue
+
+			frame_image = Image.fromarray(cv.cvtColor(matlike, cv.COLOR_BGR2RGB))
+			overlay = OverlayPreview(self.data, self.metadatas, frame_index, self.width, 36*2, self.options)
+			overlay_image = overlay.bake()
+			composite = self.composite_frame(frame_image, overlay_image)
+			composite.show()
+			sleep(0.5)
+			break
+
+		source.release()
+
+	def render(self, preview: bool = False):
+		source = self.get_source()
+		self.update_capture_properties(source)
+
 		# Create a temporary file for video without audio
-		temp_video_file = self.output_file.with_suffix(".temp.mp4")
-		out = cv.VideoWriter(str(temp_video_file), cv.VideoWriter.fourcc(*"mp4v"), self.fps, (self.width, self.height))
+		self.temp_file = self.output_file.with_suffix(".temp.mp4")
+		out = cv.VideoWriter(str(self.temp_file), cv.VideoWriter.fourcc(*"mp4v"), self.fps, (self.width, self.height))
 
 		overlays : list[Image.Image] = self.render_overlays()
 
@@ -104,14 +164,9 @@ class Playblast:
 			overlay : Image.Image = overlays[frame_index]
 			if not overlay:
 				continue
-			overlay = np.array(overlay)
 
-			# Splitting it in two
-			overlay_upper, overlay_lower = Playblast.split_overlay(overlay)
-
-			# Alpha compositing over the frame image
-			frame_image = self.apply_overlays(frame_image, overlay_upper, overlay_lower)
-			composite = cv.cvtColor(np.array(frame_image), cv.COLOR_RGB2BGR)
+			composite = self.composite_frame(frame_image, overlay)
+			composite = cv.cvtColor(np.array(composite), cv.COLOR_RGB2BGR)
 
 			# Displaying the result
 			if preview:
@@ -128,27 +183,11 @@ class Playblast:
 		out.release()
 
 		# Combine audio from original video with processed video using ffmpeg (if necessary)
-		probe_cmd = [
-			"ffprobe",
-			"-v", "error",
-			"-select_streams", "a",
-			"-show_entries", "stream=codec_type",
-			"-of", "json",
-			str(self.video_file)
-		]
-		probe_result = subprocess.run(probe_cmd, capture_output=True, text=True)
-		has_audio = False
-		try:
-			info = json.loads(probe_result.stdout)
-			has_audio = any(stream.get("codec_type") == "audio" for stream in info.get("streams", []))
-		except Exception:
-			has_audio = False
-
-		if has_audio:
+		if self.has_audio():
 			cmd = [
 				"ffmpeg",
 				"-y",
-				"-i", str(temp_video_file),
+				"-i", str(self.temp_file),
 				"-i", str(self.video_file),
 				"-c:v", "copy",
 				"-c:a", "aac",
@@ -157,11 +196,13 @@ class Playblast:
 				str(self.output_file)
 			]
 			subprocess.run(cmd, check=True)
-			temp_video_file.unlink(missing_ok=True)
+			self.temp_file.unlink(missing_ok=True)
 		else:
 			if self.output_file.exists():
 				try:
 					self.output_file.unlink(missing_ok=True)
-				except Exception as e:
+				except PermissionError as e:
 					print(f"Error deleting output file: {e}")
-			temp_video_file.rename(self.output_file)
+			self.temp_file.rename(self.output_file)
+		self.temp_file = None
+		return self.output_file
