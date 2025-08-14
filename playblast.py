@@ -66,12 +66,15 @@ class Playblast:
 
 	def get_source(self) -> cv.VideoCapture: return cv.VideoCapture(str(self.video_file))
 
-	def render(self, preview: bool = False):
-		source = self.get_source()
-		frame_count = int(source.get(cv.CAP_PROP_FRAME_COUNT))
+	def update_capture_properties(self, source: cv.VideoCapture):
+		self.frame_count = int(source.get(cv.CAP_PROP_FRAME_COUNT))
 		self.width = int(source.get(cv.CAP_PROP_FRAME_WIDTH))
 		self.height = int(source.get(cv.CAP_PROP_FRAME_HEIGHT))
 		self.fps = int(source.get(cv.CAP_PROP_FPS))
+
+	def render(self, preview: bool = False):
+		source = self.get_source()
+		self.update_capture_properties(source)
 
 		# Create a temporary file for video without audio
 		temp_video_file = self.output_file.with_suffix(".temp.mp4")
