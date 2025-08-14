@@ -64,8 +64,10 @@ class Playblast:
 		frame_image = self.apply_overlays(frame_image, overlay_upper, overlay_lower)
 		composite = cv.cvtColor(np.array(frame_image), cv.COLOR_RGB2BGR)
 
+	def get_source(self) -> cv.VideoCapture: return cv.VideoCapture(str(self.video_file))
+
 	def render(self, preview: bool = False):
-		source = cv.VideoCapture(str(self.video_file))
+		source = self.get_source()
 		frame_count = int(source.get(cv.CAP_PROP_FRAME_COUNT))
 		self.width = int(source.get(cv.CAP_PROP_FRAME_WIDTH))
 		self.height = int(source.get(cv.CAP_PROP_FRAME_HEIGHT))
