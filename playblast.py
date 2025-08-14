@@ -4,9 +4,10 @@ import cv2 as cv
 import numpy as np
 from PIL import Image
 from pathlib import Path
+from time import sleep
 from metadata import MetadataList, Metadata
 from software import SoftwareList as Soft
-from overlay import Overlays
+from overlay import Overlays, OverlayPreview
 
 class Playblast:
 	def __init__(self, video_file: Path | str, json_file: Path | str, output_file: Path | str = None, metadatas: list[Metadata] = None, options: dict = {}):
@@ -70,6 +71,31 @@ class Playblast:
 		self.width = int(source.get(cv.CAP_PROP_FRAME_WIDTH))
 		self.height = int(source.get(cv.CAP_PROP_FRAME_HEIGHT))
 		self.fps = int(source.get(cv.CAP_PROP_FPS))
+
+	def preview(self, frame: int = 0):
+		source = self.get_source()
+		self.update_capture_properties(source)
+
+		frame_head = 0
+		while source.isOpened():
+			ret, matlike = source.read()
+			frame_head += 1
+			frame_index = frame_head - 1
+			if not ret:
+				break
+
+			if not frame_index == frame:
+				continue
+
+			frame_image = Image.fromarray(cv.cvtColor(matlike, cv.COLOR_BGR2RGB))
+			overlay = OverlayPreview(self.data, self.metadatas, frame_index, self.width, 36*2, self.options)
+			overlay_image = overlay.bake()
+			composite = self.composite_frame(frame_image, overlay_image)
+			composite.show()
+			sleep(0.5)
+			break
+
+		source.release()
 
 	def render(self, preview: bool = False):
 		source = self.get_source()
