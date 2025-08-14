@@ -76,6 +76,9 @@ class Playblast:
 		source = self.get_source()
 		self.update_capture_properties(source)
 
+		if frame < 0 or frame >= self.frame_count:
+			raise ValueError(f"Frame index {frame} is out of bounds. Must be between 0 and {self.frame_count - 1}.")
+
 		frame_head = 0
 		while source.isOpened():
 			ret, matlike = source.read()
