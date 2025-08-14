@@ -31,6 +31,17 @@ class OverlayMixin:
 		}
 		self.browser = await launch(options=PYPPETEER_OPTIONS)
 
+class OverlayPreview(OverlayMixin):
+	def __init__(self, data, metadatas: list[Metadata], frame_index: int = 0, width: int = 1920, height: int = 36*2, software: str = "blender", options: dict = {}):
+		super().__init__(data, metadatas, width, height, software, options)
+		self.frame_index = frame_index
+		self.image = None
+
+	def bake(self):
+		asyncio.run(self._bake())
+		return self.image
+		
+
 class Overlays(OverlayMixin):
 	def __init__(self, data, metadatas: list[Metadata], width: int = 1920, height: int = 36*2, pool_size: int = 20, software: str = "blender", options: dict = {}):
 		super().__init__(data, metadatas, width, height, software, options)
