@@ -129,7 +129,17 @@ class OverlayPreview(OverlayMixin):
 	def bake(self):
 		asyncio.run(self._bake())
 		return self.image
+	
+	async def _bake(self):
+		await self.init_browser()
+
+		page = await self.browser.newPage()
+
+		content = self.parse_template(self.frame_index)
+		self.image = await self.bake_overlay(page, content, self.frame_index)
 		
+		await page.close()
+		await self.browser.close()
 
 class Overlays(OverlayMixin):
 	def __init__(self, data, metadatas: list[Metadata], width: int = 1920, height: int = 36*2, pool_size: int = 20, software: str = "blender", options: dict = {}):
