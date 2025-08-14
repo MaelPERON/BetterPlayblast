@@ -62,7 +62,7 @@ class Playblast:
 
 		# Alpha compositing over the frame image
 		frame = self.apply_overlays(frame, overlay_upper, overlay_lower)
-		composite = cv.cvtColor(np.array(frame), cv.COLOR_RGB2BGR)
+		return cv.cvtColor(np.array(frame), cv.COLOR_RGB2BGR)
 
 	def get_source(self) -> cv.VideoCapture: return cv.VideoCapture(str(self.video_file))
 
