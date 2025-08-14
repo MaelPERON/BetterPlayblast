@@ -178,7 +178,7 @@ class Playblast:
 			if self.output_file.exists():
 				try:
 					self.output_file.unlink(missing_ok=True)
-				except Exception as e:
+				except PermissionError as e:
 					print(f"Error deleting output file: {e}")
 			self.temp_file.rename(self.output_file)
 		self.temp_file = None
