@@ -14,6 +14,7 @@ class Playblast:
 		self.video_file = Path(video_file)
 		self.json_file = Path(json_file)
 		self.output_file = Path(output_file) if output_file else self.video_file.with_suffix(f".playblast{self.video_file.suffix}")
+		self.temp_file = None
 		self.data = self._load_json()
 		if not self.data:
 			raise ValueError(f"JSON file {self.json_file} is empty.")
@@ -121,8 +122,8 @@ class Playblast:
 		self.update_capture_properties(source)
 
 		# Create a temporary file for video without audio
-		temp_video_file = self.output_file.with_suffix(".temp.mp4")
-		out = cv.VideoWriter(str(temp_video_file), cv.VideoWriter.fourcc(*"mp4v"), self.fps, (self.width, self.height))
+		self.temp_file = self.output_file.with_suffix(".temp.mp4")
+		out = cv.VideoWriter(str(self.temp_file), cv.VideoWriter.fourcc(*"mp4v"), self.fps, (self.width, self.height))
 
 		overlays : list[Image.Image] = self.render_overlays()
 
@@ -163,7 +164,7 @@ class Playblast:
 			cmd = [
 				"ffmpeg",
 				"-y",
-				"-i", str(temp_video_file),
+				"-i", str(self.temp_file),
 				"-i", str(self.video_file),
 				"-c:v", "copy",
 				"-c:a", "aac",
@@ -172,11 +173,11 @@ class Playblast:
 				str(self.output_file)
 			]
 			subprocess.run(cmd, check=True)
-			temp_video_file.unlink(missing_ok=True)
+			self.temp_file.unlink(missing_ok=True)
 		else:
 			if self.output_file.exists():
 				try:
 					self.output_file.unlink(missing_ok=True)
 				except Exception as e:
 					print(f"Error deleting output file: {e}")
-			temp_video_file.rename(self.output_file)
+			self.temp_file.rename(self.output_file)
