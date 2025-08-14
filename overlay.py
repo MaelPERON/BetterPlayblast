@@ -24,6 +24,13 @@ class OverlayMixin:
 		self.height = height
 		self.options = options
 
+	async def init_browser(self):
+		PYPPETEER_OPTIONS["defaultViewport"] = {
+			'width': self.width,
+			'height': self.height
+		}
+		self.browser = await launch(options=PYPPETEER_OPTIONS)
+
 class Overlays(OverlayMixin):
 	def __init__(self, data, metadatas: list[Metadata], width: int = 1920, height: int = 36*2, pool_size: int = 20, software: str = "blender", options: dict = {}):
 		super().__init__(data, metadatas, width, height, software, options)
@@ -42,11 +49,7 @@ class Overlays(OverlayMixin):
 		return self.images
 
 	async def _bake(self):
-		PYPPETEER_OPTIONS["defaultViewport"] = {
-			'width': self.width,
-			'height': self.height
-		}
-		self.browser = await launch(options=PYPPETEER_OPTIONS)
+		await self.init_browser()
 
 		self.pages = [await self.browser.newPage() for _ in range(self.pool_size)]
 
