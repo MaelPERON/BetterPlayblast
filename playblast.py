@@ -61,8 +61,8 @@ class Playblast:
 		overlay_upper, overlay_lower = Playblast.split_overlay(overlay)
 
 		# Alpha compositing over the frame image
-		frame_image = self.apply_overlays(frame_image, overlay_upper, overlay_lower)
-		composite = cv.cvtColor(np.array(frame_image), cv.COLOR_RGB2BGR)
+		frame = self.apply_overlays(frame, overlay_upper, overlay_lower)
+		composite = cv.cvtColor(np.array(frame), cv.COLOR_RGB2BGR)
 
 	def get_source(self) -> cv.VideoCapture: return cv.VideoCapture(str(self.video_file))
 
