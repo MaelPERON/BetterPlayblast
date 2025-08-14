@@ -16,3 +16,12 @@ def list_installed_modules() -> list[str]:
 		except ImportError:
 			pass
 	return installed_modules
+
+def missing_modules() -> list[str]:
+	installed_modules = list_installed_modules()
+	return [pkg for pkg in PACKAGES.values() if pkg not in installed_modules]
+
+def missing_packages() -> list[str]:
+	installed_modules = list_installed_modules()
+	return [key for key, value in PACKAGES.items() if value not in installed_modules]
+
