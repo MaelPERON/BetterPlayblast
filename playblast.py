@@ -10,6 +10,29 @@ from overlay import Overlays
 
 class Playblast:
 	def __init__(self, video_file: Path | str, json_file: Path | str, output_file: Path | str = None, metadatas: list[Metadata] = None, options: dict = {}):
+		"""Initialize the Playblast object.\n
+		Note the following options. Available for you to tweak.\n
+		* overlay (dict, optional): Options for the overlay rendering.
+			* show_icons (bool, optional): Whether to show icons or text in the overlay. Defaults to True.
+			* custom_logo (str, optional): Link to the logo image source.
+			* disable_logo_filter (bool, optional): If True, disables the logo filter (used to revert the svg color on the overlay). Defaults to False.
+			* logo_size (str, optional): CSS value to scale the logo size. Defaults to 1.25rem.
+			* note_color (str, optional): CSS color value for the note text. Defaults to #FFFFFF.
+
+		Args:
+			video_file (Path | str): The path to the video file.
+			json_file (Path | str): The path to the JSON file.
+			output_file (Path | str, optional): The path to the output file. Defaults to None.
+			metadatas (list[Metadata], optional): The list of metadata to include. Defaults to None.
+			options (dict, optional): Additional options for the playblast. Defaults to {}.
+
+		Returns:
+			Path: The path to the output file.
+
+		Raises:
+			ValueError: If the JSON file is empty or invalid.
+		"""
+		
 		self.video_file = Path(video_file)
 		self.json_file = Path(json_file)
 		self.output_file = Path(output_file) if output_file else self.video_file.with_suffix(f".playblast{self.video_file.suffix}")
