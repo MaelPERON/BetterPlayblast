@@ -5,9 +5,9 @@ import numpy as np
 from PIL import Image
 from pathlib import Path
 from time import sleep
-from metadata import MetadataList, Metadata
-from software import SoftwareList as Soft
-from overlay import Overlays, OverlayPreview
+from .metadata import MetadataList, Metadata
+from .software import SoftwareList as Soft
+from .overlay import Overlays, OverlayPreview
 
 class Playblast:
 	def __init__(self, video_file: Path | str, json_file: Path | str, output_file: Path | str = None, metadatas: list[Metadata] = None, options: dict = {}):

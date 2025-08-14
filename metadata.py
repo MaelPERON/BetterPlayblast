@@ -1,5 +1,5 @@
-from software import Software
-from software import SoftwareList as Soft
+from .software import Software
+from .software import SoftwareList as Soft
 
 class Metadata:
 	def __init__(self, key, frame_dependant: bool = False, software: Software = None):

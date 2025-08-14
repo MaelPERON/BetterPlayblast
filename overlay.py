@@ -5,8 +5,8 @@ from pyppeteer import browser, launch
 from PIL import Image
 from io import BytesIO
 
-from metadata import MetadataList, Metadata
-from config import CONFIG
+from .metadata import MetadataList, Metadata
+from .config import CONFIG
 
 PYPPETEER_OPTIONS = {
 	'headless': True,
