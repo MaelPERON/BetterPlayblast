@@ -2,6 +2,7 @@ import os
 os.environ['PYPPETEER_CHROMIUM_REVISION'] = '1230501'
 import asyncio
 from pyppeteer import browser, launch
+from pathlib import Path
 from PIL import Image
 from io import BytesIO
 
@@ -23,7 +24,7 @@ class OverlayMixin:
 		self.width = width
 		self.height = height
 		self.options = options
-		with open("overlay.html", encoding="utf-8") as f:
+		with open(Path(__file__).parent / "overlay.html", encoding="utf-8") as f:
 			self.template = f.read()
 			f.close()
 
