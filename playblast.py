@@ -181,3 +181,4 @@ class Playblast:
 				except Exception as e:
 					print(f"Error deleting output file: {e}")
 			self.temp_file.rename(self.output_file)
+		self.temp_file = None
