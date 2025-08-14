@@ -1,4 +1,6 @@
 import os
+
+from ctypes.test.test_macholib import d
 os.environ['PYPPETEER_CHROMIUM_REVISION'] = '1230501'
 import asyncio
 from pyppeteer import browser, launch
@@ -30,54 +32,6 @@ class OverlayMixin:
 			'height': self.height
 		}
 		self.browser = await launch(options=PYPPETEER_OPTIONS)
-
-class OverlayPreview(OverlayMixin):
-	def __init__(self, data, metadatas: list[Metadata], frame_index: int = 0, width: int = 1920, height: int = 36*2, software: str = "blender", options: dict = {}):
-		super().__init__(data, metadatas, width, height, software, options)
-		self.frame_index = frame_index
-		self.image = None
-
-	def bake(self):
-		asyncio.run(self._bake())
-		return self.image
-		
-
-class Overlays(OverlayMixin):
-	def __init__(self, data, metadatas: list[Metadata], width: int = 1920, height: int = 36*2, pool_size: int = 20, software: str = "blender", options: dict = {}):
-		super().__init__(data, metadatas, width, height, software, options)
-		self.pool_size = pool_size
-		self.semaphore = asyncio.Semaphore(self.pool_size/2)
-		self.images = [None] * self.frame_count
-		self.pool_size = pool_size
-		self.semaphore = asyncio.Semaphore(self.pool_size/2)
-		self.images = [None] * self.frame_count
-		with open("overlay.html", encoding="utf-8") as f:
-			self.template = f.read()
-			f.close()
-
-	def bake(self):
-		asyncio.run(self._bake())
-		return self.images
-
-	async def _bake(self):
-		await self.init_browser()
-
-		self.pages = [await self.browser.newPage() for _ in range(self.pool_size)]
-
-		tasks = [self.call_bake_overlay(i) for i in range(self.frame_count)]
-		await asyncio.gather(*tasks)
-
-		for page in self.pages:
-			await page.close()
-
-		await self.browser.close()
-
-	async def call_bake_overlay(self, index):
-		async with self.semaphore:
-			content = self.parse_template(index)
-			img = await self.bake_overlay(self.pages[index % self.pool_size], content, index)
-			self.images[index] = img
-			return
 
 	async def bake_overlay(self, page, content, index, save_folder: str = None):
 		await page.setContent(content)
@@ -165,3 +119,51 @@ class Overlays(OverlayMixin):
 			content = content.replace("//{NOTE_COLOR}", f"note_color = '{note_color}'")
 
 		return content
+
+class OverlayPreview(OverlayMixin):
+	def __init__(self, data, metadatas: list[Metadata], frame_index: int = 0, width: int = 1920, height: int = 36*2, software: str = "blender", options: dict = {}):
+		super().__init__(data, metadatas, width, height, software, options)
+		self.frame_index = frame_index
+		self.image = None
+
+	def bake(self):
+		asyncio.run(self._bake())
+		return self.image
+		
+
+class Overlays(OverlayMixin):
+	def __init__(self, data, metadatas: list[Metadata], width: int = 1920, height: int = 36*2, pool_size: int = 20, software: str = "blender", options: dict = {}):
+		super().__init__(data, metadatas, width, height, software, options)
+		self.pool_size = pool_size
+		self.semaphore = asyncio.Semaphore(self.pool_size/2)
+		self.images = [None] * self.frame_count
+		self.pool_size = pool_size
+		self.semaphore = asyncio.Semaphore(self.pool_size/2)
+		self.images = [None] * self.frame_count
+		with open("overlay.html", encoding="utf-8") as f:
+			self.template = f.read()
+			f.close()
+
+	def bake(self):
+		asyncio.run(self._bake())
+		return self.images
+
+	async def _bake(self):
+		await self.init_browser()
+
+		self.pages = [await self.browser.newPage() for _ in range(self.pool_size)]
+
+		tasks = [self.call_bake_overlay(i) for i in range(self.frame_count)]
+		await asyncio.gather(*tasks)
+
+		for page in self.pages:
+			await page.close()
+
+		await self.browser.close()
+
+	async def call_bake_overlay(self, index):
+		async with self.semaphore:
+			content = self.parse_template(index)
+			img = await self.bake_overlay(self.pages[index % self.pool_size], content, index)
+			self.images[index] = img
+			return
