@@ -10,7 +10,7 @@ from .software import SoftwareList as Soft
 from .overlay import Overlays, OverlayPreview
 
 class Playblast:
-	def __init__(self, video_file: Path | str, json_file: Path | str, output_file: Path | str = None, metadatas: list[Metadata] = None, options: dict = {}):
+	def __init__(self, video_file: Path | str, json_file: Path | str, output_file: Path | str = None, metadatas: list[Metadata] = [], options: dict = {}):
 		"""Initialize the Playblast object.\n
 		Note the following options. Available for you to tweak.\n
 		* overlay (dict, optional): Options for the overlay rendering.
